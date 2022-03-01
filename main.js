@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
             img: 'images/fruit_18.png'
         },
     ]
-    const fruitArray = getRandom(cardsArray,14)
+    const fruitArray = getRandom(cardsArray,14).sort(()=> Math.random() - 0.5)
 
 
 
@@ -144,7 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('images/'+cardsChosenName+'.png')
             cards[optionOneId].setAttribute('src', 'images/'+cardsChosenName[0]+'.png')
             cards[optionTwoId].setAttribute('src', 'images/'+cardsChosenName[0]+'.png')
-            cardsWon.push(cardsChosenName)
+            cardsWon.push(cardsChosenName[0])
+            cardsWon.push(cardsChosenName[1])
         }else{
             cards[optionOneId].setAttribute('src', 'images/blank.png')
             cards[optionTwoId].setAttribute('src', 'images/blank.png')
@@ -153,10 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
         cardsChosenId = []
         console.log('cards won====');
         console.log(cardsWon.length)
+        console.log(cardsWon)
         console.log('cards Array====');
-        console.log(cardsArray.length)
+        console.log(fruitArray.length)
+        console.log(fruitArray)
+        console.log('------------------------------')
         //resultDisplay.textContent = cardsWon.length
-        if(cardsWon.length === cardsArray.length)
+        if(cardsWon.length === fruitArray.length)
         {
             alert('tu as gagné')
             //resultDisplay.textContent = 'Bravo ! Tu as gagné'
@@ -176,6 +180,8 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(checkForMatch, 500)
         }
     }
+
+    
     // 1. appel de la fonction pour la création du grid initial
     createGrid()
 
