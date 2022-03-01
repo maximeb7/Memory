@@ -1,0 +1,12 @@
+body {
+  background-color: #e1e1e1;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  height: 400px;
+  width: 700px;
+}
+
+/*# sourceMappingURL=style.css.map */
