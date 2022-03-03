@@ -12,6 +12,10 @@ body{
         #d4c1f9,
         #acf6f7
     );
+    display: flex;
+    align-items: center ;
+    justify-content: center;
+    flex-direction: column;
 }
 
 img{
@@ -24,7 +28,6 @@ img{
     // flex-wrap: wrap;
     // height: 400px;
     // width: 700px;
-
     display: grid;
     grid-template-columns: repeat(7, 6.5rem);
     grid-template-rows: repeat(4,6.5rem);
@@ -33,5 +36,37 @@ img{
 
 .title{
     text-align: center;
+    font-family: Hubballi ,Arial, Helvetica, sans-serif;
+    font-weight: bold;
 }
 
+.container-timer{
+    width: 100%;
+    display: flex;
+    align-items: center ;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.progress{
+    width: 300px;
+    height: 20px;
+    background: rgb(179, 179, 179);
+    position: relative;
+}
+.progress-inner{
+    background: rgb(122, 237, 122);
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+h1{
+    margin-bottom: 4rem;
+    font-size: 50px;
+}
+h2{
+    text-align: center;
+    font-family: Hubballi ,Arial, Helvetica, sans-serif;
+    font-weight: bold;
+}

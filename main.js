@@ -1,191 +1,244 @@
-document.addEventListener('DOMContentLoaded', () => {
-
+document.addEventListener("DOMContentLoaded", () => {
+    // la carte face retournée
     const blankCard = [
         {
-            name:'blank',
-            img: 'images/blank.png'
-        }
-    ]
+            name: "blank",
+            img: "images/blank.png",
+        },
+    ];
 
+    //le tableau avec toutes les cartes
     const cardsArray = [
         {
-            name:'fruit_1',
-            img: 'images/fruit_1.png'
+            name: "fruit_1",
+            img: "images/fruit_1.png",
         },
         {
-            name:'fruit_2',
-            img: 'images/fruit_2.png'
+            name: "fruit_2",
+            img: "images/fruit_2.png",
         },
         {
-            name:'fruit_3',
-            img: 'images/fruit_3.png'
+            name: "fruit_3",
+            img: "images/fruit_3.png",
         },
         {
-            name:'fruit_3',
-            img: 'images/fruit_3.png'
+            name: "fruit_3",
+            img: "images/fruit_3.png",
         },
         {
-            name:'fruit_4',
-            img: 'images/fruit_4.png'
+            name: "fruit_4",
+            img: "images/fruit_4.png",
         },
         {
-            name:'fruit_5',
-            img: 'images/fruit_5.png'
+            name: "fruit_5",
+            img: "images/fruit_5.png",
         },
         {
-            name:'fruit_6',
-            img: 'images/fruit_6.png'
+            name: "fruit_6",
+            img: "images/fruit_6.png",
         },
         {
-            name:'fruit_7',
-            img: 'images/fruit_7.png'
+            name: "fruit_7",
+            img: "images/fruit_7.png",
         },
         {
-            name:'fruit_8',
-            img: 'images/fruit_8.png'
+            name: "fruit_8",
+            img: "images/fruit_8.png",
         },
         {
-            name:'fruit_9',
-            img: 'images/fruit_9.png'
+            name: "fruit_9",
+            img: "images/fruit_9.png",
         },
         {
-            name:'fruit_10',
-            img: 'images/fruit_10.png'
+            name: "fruit_10",
+            img: "images/fruit_10.png",
         },
         {
-            name:'fruit_11',
-            img: 'images/fruit_11.png'
+            name: "fruit_11",
+            img: "images/fruit_11.png",
         },
         {
-            name:'fruit_12',
-            img: 'images/fruit_12.png'
+            name: "fruit_12",
+            img: "images/fruit_12.png",
         },
         {
-            name:'fruit_13',
-            img: 'images/fruit_13.png'
+            name: "fruit_13",
+            img: "images/fruit_13.png",
         },
         {
-            name:'fruit_14',
-            img: 'images/fruit_14.png'
+            name: "fruit_14",
+            img: "images/fruit_14.png",
         },
         {
-            name:'fruit_15',
-            img: 'images/fruit_15.png'
+            name: "fruit_15",
+            img: "images/fruit_15.png",
         },
         {
-            name:'fruit_16',
-            img: 'images/fruit_16.png'
+            name: "fruit_16",
+            img: "images/fruit_16.png",
         },
         {
-            name:'fruit_17',
-            img: 'images/fruit_17.png'
+            name: "fruit_17",
+            img: "images/fruit_17.png",
         },
         {
-            name:'fruit_18',
-            img: 'images/fruit_18.png'
+            name: "fruit_18",
+            img: "images/fruit_18.png",
         },
-    ]
-    const fruitArray = getRandom(cardsArray,14).sort(()=> Math.random() - 0.5)
+    ];
+    //sélection des cartes et création du tableau pour la partie
+    const fruitArray = getRandomCardsValues(cardsArray);
 
+    // constante pour le grid
+    const grid = document.querySelector(".grid");
+    //le span qui affiche le temsp
+    const timeSpan = document.querySelector(".time");
+    //progress bar
+    const progressBar = document.querySelector(".progress-inner");
+    //initialisation de tableaux vides pour le nom des cartes choisies, leurs id, et les combinaisons de paires
+    var cardsChosenName = [];
+    var cardsChosenId = [];
+    var cardsWon = [];
 
+    //1. creation du grid
+    createGrid();
 
-    const grid = document.querySelector('.grid') 
-    const resultDisplay = document.querySelector('#result')
-    var cardsChosenName = []
-    var cardsChosenId = []
-    var cardsWon = []
+    /*
+     *Progress bar
+     */
+    //durée maximum d'une partie
+    let interval = 180;
+    //on initialise un décompte qui permet notamment de régler la largeur
+    // de la progress bar
+    var countDown = setInterval(() => {
+        interval--;
+        let progressWidth = (interval / 60) * 100;
+        //si interval > 0 on mets à jour la taille de la progress bar et on affiche le temps restant
+        //sinon on indique au joueur qu'il a perdu
+        if (interval > 0) {
+            progressBar.style.width = progressWidth + "px";
+            timeSpan.innerHTML = interval + "s";
+        } else {
+            clearInterval(countDown);
+            progressBar.style.width = "0%";
+            alert("Tu as perdu");
+            //on recharge la page
+            window.location.reload();
+        }
+    }, 1000);
 
+    // }
+
+    /**
+     * Génère un tableau de paire de cartes de façon random avec un tri random
+     * @param {*} array
+     * @returns
+     */
+    function getRandomCardsValues(array) {
+        var randomSelectedCards = [];
+        //tant que la longueur est différente de 14 on execute le code
+        do {
+            //génère un index random basé sur la taille du tableau d'entrée
+            var random = Math.floor(Math.random() * array.length);
+            //si la valeur trouvé dans le tableau passé en paramètre de la fonction grace à l'index
+            // n'existe pas dans le tableau finals alors on l'insère
+            //si elle existe on continue de générer un index aléatoire jusqu'à ce que cette valeur n'existe pas dans le tableau final
+            if (randomSelectedCards.some((final) => final.name === array[random].name)) {
+                continue;
+            }
+            randomSelectedCards.push(array[random]);
+        } while (randomSelectedCards.length != 14);
+
+        arrayFinal = [];
+        // il y a 14 cartes uniques dans randomSelectedCards / On duplique ces cartes pour générer des paires
+        for (var i = 0; i < randomSelectedCards.length; ++i) {
+            arrayFinal.push(randomSelectedCards[i]);
+            arrayFinal.push(randomSelectedCards[i]);
+        }
+        //enfin on mélange les cartes dans le tableau pour que l'ordre d'affichage sur le grid soit aléatoire
+        arrayFinal = arrayFinal.sort(() => Math.random() - 0.5);
+        return arrayFinal;
+    }
     /**
      * Création du grid initial
      */
     function createGrid() {
-        //var fruitRandom = getRandom(fruitArray,14)
-        for(let i = 0 ; i < fruitArray.length ; i++ ){
-            var card = document.createElement('img')
-            card.setAttribute('src','images/blank.png')
-            card.setAttribute('data-id', i)
-            card.addEventListener('click',flipCard)
-            grid.appendChild(card)
+        //on boucle sur le tableau de cartes des fruits généré précedemment avec la méthode getRandomCardsValue
+        for (let i = 0; i < fruitArray.length; i++) {
+            //pour chaque carte du grid on affiche la face caché lors de l'initialisation de la partie
+            var card = document.createElement("img");
+            card.setAttribute("src", "images/blank.png");
+            card.setAttribute("data-id", i);
+            //on ajoute un listener pour gérer les click et on appelle la méthode flipcard
+            card.addEventListener("click", flipCard);
+            grid.appendChild(card);
         }
     }
-    
+
     /**
-     * Sélectionne les cartes de façon aléatoire à chaque appelle
-     * à partir du tableau fruitArray
-     * @param {*} arr 
-     * @param {*} n 
-     * @returns 
+     * Analyse si deux cartes sélectionnées sont identiques
      */
-    function getRandom(arr, n) {
-        var result = new Array(n),
-            len = arr.length,
-            taken = new Array(len);
-        if (n > len)
-            throw new RangeError("getRandom: more elements taken than available");
-        while (n--) {
-            var x = Math.floor(Math.random() * len);
-            result[n] = arr[x in taken ? taken[x] : x];
-            //on pousse une autre fois le résultat dans le tableau pour qu'il y ai des paires de cartes
-            result.push(result[n])
-            taken[x] = --len in taken ? taken[len] : len;
-        }
-        return result;
-    }
+    function checkForMatch() {
+        var cards = document.querySelectorAll("img");
+        const optionOneId = cardsChosenId[0];
+        const optionTwoId = cardsChosenId[1];
+        // si le temps restan est supérieur à 0
+        if (interval > 0) {
+            //si les deux cartes choisies sont identiques. on laisse les cartes affichées
+            //et on les ajoute toutes les deux dans le tableau des cartes trouvées
+            if (cardsChosenName[0] === cardsChosenName[1]) {
+                cards[optionOneId].setAttribute(
+                    "src",
+                    "images/" + cardsChosenName[0] + ".png"
+                );
+                cards[optionTwoId].setAttribute(
+                    "src",
+                    "images/" + cardsChosenName[0] + ".png"
+                );
+                cardsWon.push(cardsChosenName[0]);
+                cardsWon.push(cardsChosenName[1]);
+            } else {
+                //sinon on retourne les cartes
+                cards[optionOneId].setAttribute("src", "images/blank.png");
+                cards[optionTwoId].setAttribute("src", "images/blank.png");
+            }
+            //on réinitialise les deux tableaux 
+            cardsChosenName = [];
+            cardsChosenId = [];
+            //quand la taille du tableau des cartes trouvées est égale à celle du tableau initial
+            //l'utilisateur a gagné
+            if (cardsWon.length === fruitArray.length) {
+                alert("tu as gagné en :");
+                // saveUserTimes(180 - interval);
+                // enregistrer le temps
 
-
-    function checkForMatch(){
-        var cards =document.querySelectorAll('img')
-        const optionOneId =  cardsChosenId[0]
-        const optionTwoId = cardsChosenId[1]
-
-        if(cardsChosenName[0] === cardsChosenName[1])
-        {
-            //alert('tu as trouvé une combinaison')
-            console.log('images/'+cardsChosenName+'.png')
-            cards[optionOneId].setAttribute('src', 'images/'+cardsChosenName[0]+'.png')
-            cards[optionTwoId].setAttribute('src', 'images/'+cardsChosenName[0]+'.png')
-            cardsWon.push(cardsChosenName[0])
-            cardsWon.push(cardsChosenName[1])
-        }else{
-            cards[optionOneId].setAttribute('src', 'images/blank.png')
-            cards[optionTwoId].setAttribute('src', 'images/blank.png')
-        }
-        cardsChosenName = []
-        cardsChosenId = []
-        console.log('cards won====');
-        console.log(cardsWon.length)
-        console.log(cardsWon)
-        console.log('cards Array====');
-        console.log(fruitArray.length)
-        console.log(fruitArray)
-        console.log('------------------------------')
-        //resultDisplay.textContent = cardsWon.length
-        if(cardsWon.length === fruitArray.length)
-        {
-            alert('tu as gagné')
-            //resultDisplay.textContent = 'Bravo ! Tu as gagné'
+                window.location.reload();
+            }
         }
     }
 
-
-
-
-    function flipCard(){
-        var cardId = this.getAttribute('data-id')
-        cardsChosenName.push(fruitArray[cardId].name)
-        cardsChosenId.push(cardId)
-        this.setAttribute('src',fruitArray[cardId].img)
-        if (cardsChosenName.length === 2)
-        {
-            setTimeout(checkForMatch, 500)
-        }
-    }
-
+    /**
+     * traitement lorsque un utilisateur clique sur une carte
+     */
+    function flipCard() {
+        //récupère l'id de la carte cliqué
+        var cardId = this.getAttribute("data-id");
+        //on la pousse dans les deux tableaux
+        cardsChosenName.push(fruitArray[cardId].name);
+        cardsChosenId.push(cardId);
+        this.setAttribute("src", fruitArray[cardId].img);
     
-    // 1. appel de la fonction pour la création du grid initial
-    createGrid()
-
-
-
-})
-
+        if (cardsChosenName.length === 2) {
+            //on vérifie si l'utilisateur n'as pas cliqué deux fois la même carte
+            //si c'est le cas on retourne la carte selectionné
+            if (cardsChosenId[0] !== cardsChosenId[1]) {
+                setTimeout(checkForMatch, 500);
+            } else {
+                var cards = document.querySelectorAll("img");
+                cards[cardsChosenId[0]].setAttribute("src", "images/blank.png");
+                cardsChosenName = [];
+                cardsChosenId = [];
+            }
+        }
+    }
+});
