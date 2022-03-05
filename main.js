@@ -229,6 +229,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cardsChosenName.push(fruitArray[cardId].name);
         cardsChosenId.push(cardId);
         this.setAttribute("src", fruitArray[cardId].img);
+        // this.setAttribute("style", "transform: rotateY(180deg)" )
     
         if (cardsChosenName.length === 2) {
             //on vérifie si l'utilisateur n'as pas cliqué deux fois la même carte
