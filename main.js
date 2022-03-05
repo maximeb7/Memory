@@ -208,10 +208,12 @@ document.addEventListener("DOMContentLoaded", () => {
             //quand la taille du tableau des cartes trouvées est égale à celle du tableau initial
             //l'utilisateur a gagné
             if (cardsWon.length === fruitArray.length) {
-                alert("tu as gagné en :");
+                
                 // saveUserTimes(180 - interval);
                 // enregistrer le temps
-
+                var userTime = 180 - interval
+                saveTimeResult(userTime)
+                alert("tu as gagné en : "+userTime+" secondes");
                 window.location.reload();
             }
         }
@@ -241,4 +243,73 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     }
+
+    getBestResults()
+
+    /**
+     * Récupère les meilleurs résultats enregistrés
+     */
+    function getBestResults() {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+            }
+        };
+        xmlhttp.open("GET", "http://localhost:8888/gettime.php", true);
+        xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+        xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
+        xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencode');
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                displayBestResults(xmlhttp.response)
+            }
+        };
+        xmlhttp.send();
+    }
+
+    /**
+     * Formate les résultats de temps reçus et les affiche dans une popup d'alerte
+     * @param {*} xmlHttpResponse 
+     */
+    function displayBestResults(xmlHttpResponse) {
+        var responseBestResults = JSON.parse(xmlHttpResponse);
+        var best_times = "Bienvenue ! Voici les meilleurs temps de partie enregistrés: \n \n";
+            for (var i = 0; i < responseBestResults.length; i++) {
+                best_times += "===> " + responseBestResults[i] + " secondes \n";
+            }
+        alert(best_times);
+    }
+
+    /**
+     * Sauvegarde en base de données le temps de la partie terminée
+     * @param {*} time 
+     */
+    function saveTimeResult(time)
+    {
+        
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                console.log(this.responseText);
+            }
+        };
+
+        var data = {'time': time}
+
+        xmlhttp.open("POST", "http://localhost:8888/savetime.php", true);
+        xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
+        xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
+        xmlhttp.setRequestHeader('Content-Type', 'application/form-data');
+        
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 ) {
+                console.log('response')
+                console.log(xmlhttp.response)
+            }
+        };
+        xmlhttp.send(JSON.stringify(data));
+    }
+
+    
 });
