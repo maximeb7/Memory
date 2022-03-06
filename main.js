@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // la carte face retournée
+    // Initialise la constante qui contient l'image de la carte face retournée 
     const blankCard = [
         {
             name: "blank",
@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
         },
     ];
 
-    //le tableau avec toutes les cartes
+    //Initialise la constante avec l'ensemble des cartes de fruits disponibles 
     const cardsArray = [
         {
             name: "fruit_1",
@@ -86,36 +86,45 @@ document.addEventListener("DOMContentLoaded", () => {
             img: "images/fruit_18.png",
         },
     ];
+
     //sélection des cartes et création du tableau pour la partie
+    //on appelle une méthode qui va nous permettre de sélectionner les cartes de façon aléatoire, de définir des paires et
+    //de mélanger le tableau final de façon aléatoire également pour que les cartes soit triées dans un ordre différent à chaque rechargement de page
     const fruitArray = getRandomCardsValues(cardsArray);
 
     // constante pour le grid
+    //on utilise querySelector pour récupérer l'élément d'index.html qui a la classe grid
     const grid = document.querySelector(".grid");
-    //le span qui affiche le temsp
+    //on en fait de même pour l'élément qui va afficher le temps
     const timeSpan = document.querySelector(".time");
-    //progress bar
+    //et la même chose pour la progress bar
     const progressBar = document.querySelector(".progress-inner");
-    //initialisation de tableaux vides pour le nom des cartes choisies, leurs id, et les combinaisons de paires
+
+    //initialisation de tableaux vides pour le nom des cartes choisies, leurs id, et les combinaisons de paires trouvées
     var cardsChosenName = [];
     var cardsChosenId = [];
     var cardsWon = [];
 
-    //1. creation du grid
+    //1. Méthode pour la creation du grid
     createGrid();
+
+    //2. Récupère les meilleurs temps de partie en base de données
+    getBestResults();
 
     /*
      *Progress bar
      */
-    //durée maximum d'une partie
+    //on définit un interval pour la durée maximum d'une partie
     let interval = 180;
-    //on initialise un décompte qui permet notamment de régler la largeur
+    //on initialise un décompte qui va nous permettre de gérer dynamiquement la largeur
     // de la progress bar
     var countDown = setInterval(() => {
         interval--;
         let progressWidth = (interval / 60) * 100;
         //si interval > 0 on mets à jour la taille de la progress bar et on affiche le temps restant
-        //sinon on indique au joueur qu'il a perdu
+        //sinon si le temps est dépassé, on indique au joueur qu'il a perdu
         if (interval > 0) {
+            //on gère ici dynamiquement la largeur de la progress bar en fonction de la variable progressWidth
             progressBar.style.width = progressWidth + "px";
             timeSpan.innerHTML = interval + "s";
         } else {
@@ -135,17 +144,20 @@ document.addEventListener("DOMContentLoaded", () => {
      * @returns
      */
     function getRandomCardsValues(array) {
+        //on initialise un tableau vide dans lequel sera poussé les cartes choisies
         var randomSelectedCards = [];
-        //tant que la longueur est différente de 14 on execute le code
+        //tant que la longueur est différente de 14 (cela corresponds à 7 colonnes multiplié par 4 lignes comme sur le grid) on execute le code
         do {
             //génère un index random basé sur la taille du tableau d'entrée
             var random = Math.floor(Math.random() * array.length);
-            //si la valeur trouvé dans le tableau passé en paramètre de la fonction grace à l'index
+            //si la valeur trouvée dans le tableau passé en paramètre de la fonction grace à l'index
             // n'existe pas dans le tableau finals alors on l'insère
             //si elle existe on continue de générer un index aléatoire jusqu'à ce que cette valeur n'existe pas dans le tableau final
+            // cela permet d'éviter qu'il y ai deux paires de cartes identiques dans le grid
             if (randomSelectedCards.some((final) => final.name === array[random].name)) {
                 continue;
             }
+            // on pousse la carte dans le tableau
             randomSelectedCards.push(array[random]);
         } while (randomSelectedCards.length != 14);
 
@@ -169,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
             var card = document.createElement("img");
             card.setAttribute("src", "images/blank.png");
             card.setAttribute("data-id", i);
-            //on ajoute un listener pour gérer les click et on appelle la méthode flipcard
+            //on ajoute un listener pour détecter les click et on appelle la méthode flipcard en conséquence
             card.addEventListener("click", flipCard);
             grid.appendChild(card);
         }
@@ -182,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
         var cards = document.querySelectorAll("img");
         const optionOneId = cardsChosenId[0];
         const optionTwoId = cardsChosenId[1];
-        // si le temps restan est supérieur à 0
+        // si le temps restant est supérieur à 0
         if (interval > 0) {
             //si les deux cartes choisies sont identiques. on laisse les cartes affichées
             //et on les ajoute toutes les deux dans le tableau des cartes trouvées
@@ -208,11 +220,10 @@ document.addEventListener("DOMContentLoaded", () => {
             //quand la taille du tableau des cartes trouvées est égale à celle du tableau initial
             //l'utilisateur a gagné
             if (cardsWon.length === fruitArray.length) {
-                
-                // saveUserTimes(180 - interval);
-                // enregistrer le temps
+            // on appelle la méthode saveTimeResult pour enregistrer ce nouveau temps en base de données
                 var userTime = 180 - interval
                 saveTimeResult(userTime)
+                //on affiche le temps de la partie à l'utilisateur et on recharge la page
                 alert("tu as gagné en : "+userTime+" secondes");
                 window.location.reload();
             }
@@ -229,7 +240,6 @@ document.addEventListener("DOMContentLoaded", () => {
         cardsChosenName.push(fruitArray[cardId].name);
         cardsChosenId.push(cardId);
         this.setAttribute("src", fruitArray[cardId].img);
-        // this.setAttribute("style", "transform: rotateY(180deg)" )
     
         if (cardsChosenName.length === 2) {
             //on vérifie si l'utilisateur n'as pas cliqué deux fois la même carte
@@ -245,8 +255,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    getBestResults()
-
     /**
      * Récupère les meilleurs résultats enregistrés
      */
@@ -257,12 +265,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log(this.responseText);
             }
         };
+        // on appelle le endpoint et le fichier php pour récupérer les 5 meilleurs temps de parties enregistrés
         xmlhttp.open("GET", "http://localhost:8888/gettime.php", true);
         xmlhttp.setRequestHeader('Access-Control-Allow-Headers', '*');
         xmlhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
         xmlhttp.setRequestHeader('Content-Type', 'application/x-www-form-urlencode');
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                //on appelle une méthode pour formater l'affichage des résultats dans la fenêtre d'alerte
                 displayBestResults(xmlhttp.response)
             }
         };
@@ -288,14 +298,13 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function saveTimeResult(time)
     {
-        
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
                 console.log(this.responseText);
             }
         };
-
+        //on définit le paramètre de temps pour l'envoyer avec la méthode post
         var data = {'time': time}
 
         xmlhttp.open("POST", "http://localhost:8888/savetime.php", true);
@@ -305,7 +314,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4 ) {
-                console.log('response')
                 console.log(xmlhttp.response)
             }
         };
